@@ -53,7 +53,7 @@ export default function AdminPanel({ products, banners, saveProducts, saveBanner
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!formData.name || !formData.price || !formData.stock || !formData.category) {
       alert('Por favor completa los campos obligatorios (Nombre, Precio, Stock, Categoría)');
       return;
@@ -74,11 +74,11 @@ export default function AdminPanel({ products, banners, saveProducts, saveBanner
       updatedProducts = [...products, newProduct];
     }
 
-    await saveProducts(updatedProducts);
+    saveProducts(updatedProducts);
     resetForm();
   };
 
-  const handleBannerSubmit = async () => {
+  const handleBannerSubmit = () => {
     if (!bannerData.image) {
       alert('Por favor agrega una imagen');
       return;
@@ -90,22 +90,22 @@ export default function AdminPanel({ products, banners, saveProducts, saveBanner
     };
 
     const updatedBanners = [...banners, newBanner];
-    await saveBanners(updatedBanners);
+    saveBanners(updatedBanners);
     setBannerData({ image: '', title: '', subtitle: '' });
     setShowBannerForm(false);
   };
 
-  const deleteBanner = async (id) => {
-    if (confirm('¿Eliminar este banner?')) {
+  const deleteBanner = (id) => {
+    if (window.confirm('¿Eliminar este banner?')) {
       const updatedBanners = banners.filter(b => b.id !== id);
-      await saveBanners(updatedBanners);
+      saveBanners(updatedBanners);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (confirm('¿Estás segura de eliminar este producto?')) {
+  const handleDelete = (id) => {
+    if (window.confirm('¿Estás segura de eliminar este producto?')) {
       const updatedProducts = products.filter(p => p.id !== id);
-      await saveProducts(updatedProducts);
+      saveProducts(updatedProducts);
     }
   };
 
@@ -139,9 +139,9 @@ export default function AdminPanel({ products, banners, saveProducts, saveBanner
     setShowForm(false);
   };
 
-  const savePaymentConfig = async () => {
+  const savePaymentConfig = () => {
     try {
-      await window.storage.set('luna-rosa-payment-info', JSON.stringify(localPaymentInfo));
+      localStorage.setItem('luna-rosa-payment-info', JSON.stringify(localPaymentInfo));
       alert('Información de pago guardada correctamente');
       setShowPaymentConfig(false);
     } catch (error) {
@@ -149,11 +149,11 @@ export default function AdminPanel({ products, banners, saveProducts, saveBanner
     }
   };
 
-  const loadPaymentConfig = async () => {
+  const loadPaymentConfig = () => {
     try {
-      const result = await window.storage.get('luna-rosa-payment-info');
-      if (result?.value) {
-        setLocalPaymentInfo(JSON.parse(result.value));
+      const data = localStorage.getItem('luna-rosa-payment-info');
+      if (data) {
+        setLocalPaymentInfo(JSON.parse(data));
       }
     } catch (error) {
       console.log('No hay información guardada');
