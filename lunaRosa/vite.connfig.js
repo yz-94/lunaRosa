@@ -5,11 +5,3 @@ export default defineConfig({
   plugins: [react()],
   base: '/'
 })
-```
-
-### **3. .gitignore** (raíz)
-```
-node_modules
-dist
-.env
-.DS_Store
