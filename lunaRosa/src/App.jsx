@@ -40,19 +40,17 @@ export default function App() {
     loadPaymentInfo();
   }, []);
 
-  const loadData = async () => {
+  const loadData = () => {
     try {
-      const [productsResult, bannersResult, cartResult, favoritesResult] = await Promise.all([
-        window.storage.get('luna-rosa-products').catch(() => null),
-        window.storage.get('luna-rosa-banners').catch(() => null),
-        window.storage.get('luna-rosa-cart').catch(() => null),
-        window.storage.get('luna-rosa-favorites').catch(() => null)
-      ]);
+      const productsData = localStorage.getItem('luna-rosa-products');
+      const bannersData = localStorage.getItem('luna-rosa-banners');
+      const cartData = localStorage.getItem('luna-rosa-cart');
+      const favoritesData = localStorage.getItem('luna-rosa-favorites');
 
-      if (productsResult?.value) setProducts(JSON.parse(productsResult.value));
-      if (bannersResult?.value) setBanners(JSON.parse(bannersResult.value));
-      if (cartResult?.value) setCart(JSON.parse(cartResult.value));
-      if (favoritesResult?.value) setFavorites(JSON.parse(favoritesResult.value));
+      if (productsData) setProducts(JSON.parse(productsData));
+      if (bannersData) setBanners(JSON.parse(bannersData));
+      if (cartData) setCart(JSON.parse(cartData));
+      if (favoritesData) setFavorites(JSON.parse(favoritesData));
     } catch (error) {
       console.log('Error cargando datos:', error);
     } finally {
@@ -60,20 +58,20 @@ export default function App() {
     }
   };
 
-  const loadPaymentInfo = async () => {
+  const loadPaymentInfo = () => {
     try {
-      const result = await window.storage.get('luna-rosa-payment-info');
-      if (result?.value) {
-        setPaymentInfo(JSON.parse(result.value));
+      const data = localStorage.getItem('luna-rosa-payment-info');
+      if (data) {
+        setPaymentInfo(JSON.parse(data));
       }
     } catch (error) {
       console.log('No hay información de pago guardada');
     }
   };
 
-  const saveProducts = async (updatedProducts) => {
+  const saveProducts = (updatedProducts) => {
     try {
-      await window.storage.set('luna-rosa-products', JSON.stringify(updatedProducts));
+      localStorage.setItem('luna-rosa-products', JSON.stringify(updatedProducts));
       setProducts(updatedProducts);
     } catch (error) {
       console.error('Error al guardar:', error);
@@ -81,27 +79,27 @@ export default function App() {
     }
   };
 
-  const saveBanners = async (updatedBanners) => {
+  const saveBanners = (updatedBanners) => {
     try {
-      await window.storage.set('luna-rosa-banners', JSON.stringify(updatedBanners));
+      localStorage.setItem('luna-rosa-banners', JSON.stringify(updatedBanners));
       setBanners(updatedBanners);
     } catch (error) {
       console.error('Error al guardar banners:', error);
     }
   };
 
-  const saveCart = async (updatedCart) => {
+  const saveCart = (updatedCart) => {
     try {
-      await window.storage.set('luna-rosa-cart', JSON.stringify(updatedCart));
+      localStorage.setItem('luna-rosa-cart', JSON.stringify(updatedCart));
       setCart(updatedCart);
     } catch (error) {
       console.error('Error al guardar carrito:', error);
     }
   };
 
-  const saveFavorites = async (updatedFavorites) => {
+  const saveFavorites = (updatedFavorites) => {
     try {
-      await window.storage.set('luna-rosa-favorites', JSON.stringify(updatedFavorites));
+      localStorage.setItem('luna-rosa-favorites', JSON.stringify(updatedFavorites));
       setFavorites(updatedFavorites);
     } catch (error) {
       console.error('Error al guardar favoritos:', error);
@@ -169,7 +167,7 @@ export default function App() {
     }, 0).toFixed(2);
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (!orderData.name || !orderData.phone || !orderData.address) {
       alert('Por favor completa todos los campos requeridos:\n- Nombre completo\n- Teléfono\n- Dirección de entrega');
       return;
@@ -185,10 +183,10 @@ export default function App() {
     };
 
     try {
-      const ordersResult = await window.storage.get('luna-rosa-orders').catch(() => null);
-      const orders = ordersResult?.value ? JSON.parse(ordersResult.value) : [];
+      const ordersData = localStorage.getItem('luna-rosa-orders');
+      const orders = ordersData ? JSON.parse(ordersData) : [];
       orders.push(order);
-      await window.storage.set('luna-rosa-orders', JSON.stringify(orders));
+      localStorage.setItem('luna-rosa-orders', JSON.stringify(orders));
 
       const updatedProducts = products.map(product => {
         const cartItem = cart.find(item => item.id === product.id);
@@ -197,9 +195,9 @@ export default function App() {
         }
         return product;
       });
-      await saveProducts(updatedProducts);
+      saveProducts(updatedProducts);
 
-      await window.storage.set('luna-rosa-cart', JSON.stringify([]));
+      localStorage.setItem('luna-rosa-cart', JSON.stringify([]));
       setCart([]);
       setShowCheckout(false);
       setShowCart(false);
